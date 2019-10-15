@@ -1,36 +1,57 @@
 package com.cloutier.piaapi.controllers;
 
-import java.util.List;
-
 import com.cloutier.piaapi.data.DailyDataRequest;
 import com.cloutier.piaapi.data.DailyDataResponse;
+import com.cloutier.piaapi.news.NewsService;
+import com.cloutier.piaapi.news.OutboundNewsResponse;
 import com.cloutier.piaapi.services.DailyDataService;
 
+import com.cloutier.piaapi.weather.OutboundWeatherResponse;
+import com.cloutier.piaapi.weather.WeatherService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
+
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/api/v1")
 public class OutboundController {
 
     @Autowired
     private DailyDataService dailyDataService;
+    @Autowired
+    private NewsService newsService;
+    @Autowired
+    private WeatherService weatherService;
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
 
-    @PostMapping(path = "/daily")
-    public List<DailyDataResponse> fetchDailyData(@RequestBody DailyDataRequest dailyDataRequest) {
+
+    @MessageMapping("/hello")
+    @SendTo("/topic/greetings")
+    public OutboundWeatherResponse fetchDailyData(@RequestBody DailyDataRequest dailyDataRequest) {
         if (dailyDataRequest.getEmail() != null) {
-            List<DailyDataResponse> dailyDataResponse = dailyDataService.getDailyData(dailyDataRequest);
-        return dailyDataResponse;    
+             return dailyDataService.getDailyData(dailyDataRequest);
     } else { return null;}
     }
 
-    @GetMapping(path = "/daily")
-    public String getString (){
-        return "gettest";
+    @SubscribeMapping("/topic/news")
+    public OutboundNewsResponse getAllNewsStories() {
+        List<OutboundNewsResponse> newsResponse = newsService.getAllNews();
+        for (int i = 0; i < newsResponse.size(); i++) {
+            this.simpMessagingTemplate.convertAndSend("/topic/news", newsResponse.get(i));
+        }
+        return null;
     }
 
+    @SubscribeMapping("/topic/greetings")
+    public OutboundWeatherResponse getWeather() {
+        OutboundWeatherResponse weatherResponse = weatherService.getLastWeather();
+        return weatherResponse;
+    }
 }

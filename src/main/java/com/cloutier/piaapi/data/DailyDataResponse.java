@@ -1,19 +1,14 @@
 package com.cloutier.piaapi.data;
 
+import com.cloutier.piaapi.weather.Currently;
+
 public class DailyDataResponse {
 
     private int userId;
+    private Currently currently;
     private int time;
     private String summary;
     private int temperature;
-
-    public int getUserId() {
-        return userId;
-    }
-
-    public void setEmail(int userId) {
-        this.userId = userId;
-    }
 
     public int getTime() {
         return time;
@@ -39,4 +34,19 @@ public class DailyDataResponse {
         this.temperature = temperature;
     }
 
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public Currently getCurrently() {
+        return currently;
+    }
+
+    public void setCurrently(Currently currently) {
+        this.currently = currently;
+    }
 }

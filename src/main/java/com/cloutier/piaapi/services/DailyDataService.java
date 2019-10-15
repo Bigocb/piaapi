@@ -6,6 +6,7 @@ import com.cloutier.piaapi.data.DailyDataRepository;
 import com.cloutier.piaapi.data.DailyDataRequest;
 import com.cloutier.piaapi.data.DailyDataResponse;
 
+import com.cloutier.piaapi.weather.OutboundWeatherResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,12 +20,12 @@ public class DailyDataService {
         this.dailyDataRepository = dailyDataRepository;
     }
 
-    public DailyDataResponse getDailyData(DailyDataRequest dailyDataRequest) {
+    public OutboundWeatherResponse getDailyData(DailyDataRequest dailyDataRequest) {
         if (dailyDataRequest.getEmail() != null) {
 
-            DailyDataResponse dailyDataResponse = dailyDataRepository.getLatestWeather();
+            OutboundWeatherResponse outboundWeatherResponse = dailyDataRepository.getLatestWeather();
 
-             return dailyDataResponse;
+             return outboundWeatherResponse;
         } else {
             return null;
         }
