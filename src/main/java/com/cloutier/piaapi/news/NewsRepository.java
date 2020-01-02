@@ -30,14 +30,20 @@ public class NewsRepository {
                 field("source"),
                 field("author"),
                 field("title"),
-                field("content")
+                field("content"),
+                field("url"),
+                field("urltoimage"),
+                field("publishat")
         ).values(
                 uuid,
                 "source",
                 articles.getAuthor(),
                 articles.getTitle(),
-                articles.getContent()
-        ).onDuplicateKeyIgnore()
+                articles.getContent(),
+                articles.getUrl(),
+                articles.getUrlToImage(),
+                articles.getPublishedAt()
+        ).onConflictDoNothing()
         .execute();
 
         OutboundNewsResponse outboundNewsResponse = getNews(uuid);
@@ -48,14 +54,14 @@ public class NewsRepository {
 
    OutboundNewsResponse getNews(UUID uuid) {
         OutboundNewsResponse newsResponses =
-        jooq.selectFrom("news")
-                .where(field("feed").eq(uuid)).fetchOneInto(OutboundNewsResponse.class);
+        jooq.selectFrom(table("news"))
+                .where(field("feed").eq(uuid)).orderBy(field("publishat").desc()).fetchOneInto(OutboundNewsResponse.class);
         return newsResponses;
     }
 
     List<OutboundNewsResponse> getAllNews() {
         List<OutboundNewsResponse> newsResponses =
-                jooq.selectFrom("news")
+                jooq.selectFrom(table("news")).where(field("sentiment").isNotNull()).orderBy(field("publishat").desc())
                         .fetchInto(OutboundNewsResponse.class);
         return newsResponses;
     }

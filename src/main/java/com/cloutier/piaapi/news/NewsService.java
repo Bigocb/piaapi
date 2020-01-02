@@ -1,5 +1,7 @@
 package com.cloutier.piaapi.news;
 
+import com.cloutier.piaapi.services.MessageReciever;
+import com.cloutier.piaapi.services.MessageSender;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class NewsService {
@@ -23,9 +26,13 @@ public class NewsService {
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
 
-    public NewsService(NewsRepository newsRepository,SimpMessagingTemplate simpMessagingTemplate) {
+    @Autowired
+    private MessageSender messageSender;
+
+    public NewsService(NewsRepository newsRepository,SimpMessagingTemplate simpMessagingTemplate, MessageSender messageSender) {
         this.newsRepository = newsRepository;
         this.simpMessagingTemplate = simpMessagingTemplate;
+        this.messageSender = messageSender;
     }
 
 public int getNews() {
@@ -42,6 +49,8 @@ public int getNews() {
         OutboundNewsResponse newsResponses = newsRepository.addNews(result.get(i));
         if(newsResponses != null) {
             this.simpMessagingTemplate.convertAndSend("/topic/news", newsResponses);
+            String uuid = String.valueOf(newsResponses.getFeed());
+            messageSender.produceMessage(uuid);
         }
     }
 
@@ -51,6 +60,7 @@ public int getNews() {
 
 
     public List<OutboundNewsResponse> getAllNews() {
+//        messageSender.recieveMessage("i");
         List<OutboundNewsResponse> newsResponse = newsRepository.getAllNews();
 
         return newsResponse;

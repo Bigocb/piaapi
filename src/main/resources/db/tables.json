@@ -1,0 +1,33 @@
+{
+  "tables" : [
+{
+      "file": "news.csv",
+      "table": "news",
+      "columns": [
+        "feed",
+        "source",
+        "author",
+        "title",
+        "content",
+        "url",
+        "urltoimage",
+        "publishat"
+      ]
+    },
+    {
+      "file": "weather.csv",
+      "table": "weather",
+      "columns": [
+        "feed",
+        "source",
+        "author",
+        "title",
+        "content",
+        "url",
+        "urltoimage",
+        "publishat"
+      ]
+    }
+]
+}
+

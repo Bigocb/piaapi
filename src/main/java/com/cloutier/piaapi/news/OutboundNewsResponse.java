@@ -2,6 +2,7 @@ package com.cloutier.piaapi.news;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 public class OutboundNewsResponse {
@@ -12,6 +13,40 @@ public class OutboundNewsResponse {
     private String title;
     private String publishat;
     private String content;
+    private String sentiment;
+    public String url;
+    public String urlToImage;
+    public String tags;
+
+    public String getTags() {
+        return tags;
+    }
+
+    public void setTags(String tags) {
+        this.tags = tags;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getUrlToImage() {
+        return urlToImage;
+    }
+
+    public void setUrlToImage(String urlToImage) {
+        this.urlToImage = urlToImage;
+    }
+
+    public String getSentiment(){ return sentiment;}
+
+    public void setSentiment(String sentiment) {
+        this.sentiment = sentiment;
+    }
 
     public UUID getFeed() {
         return feed;

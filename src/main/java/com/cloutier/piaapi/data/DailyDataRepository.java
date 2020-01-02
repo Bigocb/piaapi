@@ -22,7 +22,7 @@ public class DailyDataRepository {
     }
 
     public OutboundWeatherResponse getLatestWeather() {
-        Result<Record1<Integer>> time = jooq.select(max(field("time")).cast(Integer.class).as("time")).from("weather").fetch();
+        Result<Record1<Object>> time = jooq.select(max(field("time")).as("time")).from("weather").fetch();
 
         Integer i = (Integer) time.getValue(0,field("time"));
         OutboundWeatherResponse dailyDataResponse =

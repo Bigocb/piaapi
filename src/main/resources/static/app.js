@@ -1,5 +1,11 @@
 var stompClient = null;
 
+function stompFailureCallback (error) {
+    console.log('STOMP: ' + error);
+    setTimeout(connect, 10000);
+    console.log('STOMP: Reconecting in 10 seconds');
+};
+
 function setConnected(connected) {
     $("#connect").prop("disabled", connected);
     $("#disconnect").prop("disabled", !connected);
@@ -31,7 +37,11 @@ function connect() {
             showWeatherSummary(JSON.parse(greeting.body).summary);
         });
         stompClient.subscribe('/topic/news', function (news) {
-            showNews(JSON.parse(news.body).title)});
+            showNews(
+                JSON.parse(news.body).title,
+            JSON.parse(news.body).sentiment
+            )});
+
     });
 }
 
@@ -57,8 +67,16 @@ function showWeatherSummary(message) {
     $("#summary").append('The weather is ' + message + ' right now.');
 }
 
-function showNews(message) {
-    $("#news").append("<h1>" + message + "</h1><hr>");
+function showNews(message, sentiment) {
+    console.log(sentiment);
+    console.log(message);
+    if(sentiment < 0) {
+        $("#news").append("<p >" + "<h1 class='bad'>" + message + "</h1>" + "</p>");
+    } else if (sentiment > 0) {
+        $("#news").append("<p >" + "<h1 class='good'>" + message + "</h1>" + "</p>");
+    } else {
+        $("#news").append("<p><h1>" + message + "</h1></p><hr>");
+    }
 }
 
 $(function () {
